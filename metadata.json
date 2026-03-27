@@ -1,0 +1,5 @@
+{
+  "name": "MCP API Proxy",
+  "description": "A Node.js proxy to inject X-Api-Key headers into MCP API requests.",
+  "requestFramePermissions": []
+}
