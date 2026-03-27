@@ -53,14 +53,25 @@ async function startServer() {
   app.use(cors());
 
   // 4. Proxy Configuration
-  const target = process.env.TARGET_API_URL || 'https://api.example.com';
-  const apiKey = process.env.MCP_API_KEY || '';
+  const target = process.env.TARGET_API_URL;
+  const apiKey = process.env.MCP_API_KEY;
 
-  console.log(`Proxying requests to: ${target}`);
+  if (!target) {
+    console.error('CRITICAL ERROR: TARGET_API_URL environment variable is not set.');
+    console.error('Please set TARGET_API_URL to the URL of your MCP API.');
+  }
+
+  if (!apiKey) {
+    console.warn('WARNING: MCP_API_KEY environment variable is not set.');
+    console.warn('The proxy will continue but requests may fail if the target API requires authentication.');
+  }
+
+  const finalTarget = target || 'https://api.example.com';
+  console.log(`Proxying requests to: ${finalTarget}`);
 
   // 5. Proxy Middleware Configuration
   const apiProxy = createProxyMiddleware({
-    target: target,
+    target: finalTarget,
     changeOrigin: true,
     xfwd: true, // proxy-middleware handles X-Forwarded-For etc.
     on: {
